@@ -1,0 +1,87 @@
+#ifndef MACROS_DEF
+#define MACROS_DEF
+
+#define DEF_GETTER_SETTER(fname, ty) ty get##fname() const; \
+	void set##fname(ty const);
+
+#define DEF_OCF(cname) cname(); \
+	cname(const cname&); \
+	cname& operator=(const cname&); \
+	~cname();
+
+#define IMPL_GETTER_SETTER(cname, fname, ty, field, param) ty cname::get##fname() const { \
+	std::cout << #cname << "::get" << #fname << "()" << std::endl; \
+	return this->field; \
+	} \
+	void cname::set##fname(ty const param) { \
+	std::cout << #cname << "::set" << #fname << "(" << #ty << ")" << std::endl; \
+	this->field = param; \
+	}
+
+#define IMPL_CONS0(cname, ...) cname::cname(): __VA_ARGS__ {\
+	std::cout << #cname << "()" << std::endl; \
+	}
+
+#define STRINGIZE(arg)  STRINGIZE1(arg)
+#define STRINGIZE1(arg) STRINGIZE2(arg)
+#define STRINGIZE2(arg) #arg
+
+#define CONCATENATE(arg1, arg2)   CONCATENATE1(arg1, arg2)
+#define CONCATENATE1(arg1, arg2)  CONCATENATE2(arg1, arg2)
+#define CONCATENATE2(arg1, arg2)  arg1##arg2
+
+#define IMPL_CONS_COPY_FIELD_1(param, field) this->field = param.field;
+#define IMPL_CONS_COPY_FIELD_2(param, field, ...) this->field = param.field; \
+	IMPL_CONS_COPY_FIELD_1(param, __VA_ARGS__)
+#define IMPL_CONS_COPY_FIELD_3(param, field, ...) this->field = param.field; \
+	IMPL_CONS_COPY_FIELD_2(param, __VA_ARGS__)
+#define IMPL_CONS_COPY_FIELD_4(param, field, ...) this->field = param.field; \
+	IMPL_CONS_COPY_FIELD_3(param, __VA_ARGS__)
+#define IMPL_CONS_COPY_FIELD_5(param, field, ...) this->field = param.field; \
+	IMPL_CONS_COPY_FIELD_4(param, __VA_ARGS__)
+#define IMPL_CONS_COPY_FIELD_6(param, field, ...) this->field = param.field; \
+	IMPL_CONS_COPY_FIELD_5(param, __VA_ARGS__)
+#define IMPL_CONS_COPY_FIELD_7(param, field, ...) this->field = param.field; \
+	IMPL_CONS_COPY_FIELD_6(param, __VA_ARGS__)
+#define IMPL_CONS_COPY_FIELD_8(param, field, ...) this->field = param.field; \
+	IMPL_CONS_COPY_FIELD_7(param, __VA_ARGS__)
+#define IMPL_CONS_COPY_FIELD_9(param, field, ...) this->field = param.field; \
+	IMPL_CONS_COPY_FIELD_8(param, __VA_ARGS__)
+#define IMPL_CONS_COPY_FIELD_10(param, field, ...) this->field = param.field; \
+	IMPL_CONS_COPY_FIELD_9(param, __VA_ARGS__)
+
+#define IMPL_CONS_COPY_FIELD_RSEQ_N() 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
+#define IMPL_CONS_COPY_FIELD_ARG_N(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, N, ...) N
+#define IMPL_CONS_COPY_FIELD_NARG_(...) IMPL_CONS_COPY_FIELD_ARG_N(__VA_ARGS__)
+#define IMPL_CONS_COPY_FIELD_NARG(...) IMPL_CONS_COPY_FIELD_NARG_(__VA_ARGS__, IMPL_CONS_COPY_FIELD_RSEQ_N())
+
+#define IMPL_CONS_COPY_FIELD_(N, param, ...) CONCATENATE(IMPL_CONS_COPY_FIELD_, N)(param, __VA_ARGS__)
+#define IMPL_CONS_COPY_FIELD(param, ...) IMPL_CONS_COPY_FIELD_(IMPL_CONS_COPY_FIELD_NARG(__VA_ARGS__), param, __VA_ARGS__)
+
+#define IMPL_CONS_COPY(cname, param, ...) cname::cname(const cname& param) { \
+	IMPL_CONS_COPY_FIELD(param, __VA_ARGS__) \
+	std::cout << #cname << "(const " << #cname << "&)" << std::endl; \
+	}
+
+#define IMPL_DES(cname) cname::~cname() { \
+	std::cout << "~" << #cname << "()" << std::endl; \
+	}
+
+#define IMPL_ASSIGN(cname, param, ...) cname& cname::operator=(const cname& param) { \
+	IMPL_CONS_COPY_FIELD(param, __VA_ARGS__) \
+	std::cout << #cname << "::operator=(const " << #cname << "&)" << std::endl; \
+	return *this; \
+	}
+
+#define IMPL_INIT_LIST_1(field, val) field(val)
+#define IMPL_INIT_LIST_2(field, val, ...) field(val), IMPL_INIT_LIST_1(__VA_ARGS__)
+#define IMPL_INIT_LIST_3(field, val, ...) field(val), IMPL_INIT_LIST_2(__VA_ARGS__)
+#define IMPL_INIT_LIST_4(field, val, ...) field(val), IMPL_INIT_LIST_3(__VA_ARGS__)
+#define IMPL_INIT_LIST_5(field, val, ...) field(val), IMPL_INIT_LIST_4(__VA_ARGS__)
+#define IMPL_INIT_LIST_6(field, val, ...) field(val), IMPL_INIT_LIST_5(__VA_ARGS__)
+#define IMPL_INIT_LIST_7(field, val, ...) field(val), IMPL_INIT_LIST_6(__VA_ARGS__)
+#define IMPL_INIT_LIST_8(field, val, ...) field(val), IMPL_INIT_LIST_7(__VA_ARGS__)
+#define IMPL_INIT_LIST_9(field, val, ...) field(val), IMPL_INIT_LIST_8(__VA_ARGS__)
+#define IMPL_INIT_LIST_10(field, val, ...) field(val), IMPL_INIT_LIST_9(__VA_ARGS__)
+
+#endif
