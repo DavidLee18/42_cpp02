@@ -10,7 +10,7 @@ Fixed::Fixed(const int i) {
 }
 Fixed::Fixed(const float f) {
 	std::cout << "Fixed(const float)" << std::endl;
-	raw = (int)(f * (1 << bits));
+	raw = f * (1 << bits);
 }
 float Fixed::toFloat() const { return ((float)raw / (float)(1 << bits)); }
 int Fixed::toInt() const { return (int)toFloat(); }
@@ -18,3 +18,7 @@ int Fixed::toInt() const { return (int)toFloat(); }
 std::ostream& operator<<(std::ostream& o, const Fixed& f) { return (o << f.toFloat()); }
 
 IMPL_ORD(Fixed, other, raw)
+
+IMPL_FRAC(Fixed, other, toFloat())
+
+IMPL_INCR_DECR(Fixed, other, raw)

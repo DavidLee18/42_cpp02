@@ -214,4 +214,69 @@
 	return (_this > param ? _this : param); \
 	}
 
+#define ARITH_OP_FIELD_1(nval, param, op, field) nval.field = this->field op param.field;
+#define ARITH_OP_FIELD_2(nval, param, op, field, ...) nval.field = this->field op param.field; \
+	ARITH_OP_FIELD_1(nval, param, op, __VA_ARGS__)
+#define ARITH_OP_FIELD_3(nval, param, op, field, ...) nval.field = this->field op param.field; \
+	ARITH_OP_FIELD_2(nval, param, op, __VA_ARGS__)
+#define ARITH_OP_FIELD_4(nval, param, op, field, ...) nval.field = this->field op param.field; \
+	ARITH_OP_FIELD_3(nval, param, op, __VA_ARGS__)
+#define ARITH_OP_FIELD_5(nval, param, op, field, ...) nval.field = this->field op param.field; \
+	ARITH_OP_FIELD_4(nval, param, op, __VA_ARGS__)
+#define ARITH_OP_FIELD_6(nval, param, op, field, ...) nval.field = this->field op param.field; \
+	ARITH_OP_FIELD_5(nval, param, op, __VA_ARGS__)
+#define ARITH_OP_FIELD_7(nval, param, op, field, ...) nval.field = this->field op param.field; \
+	ARITH_OP_FIELD_6(nval, param, op, __VA_ARGS__)
+#define ARITH_OP_FIELD_8(nval, param, op, field, ...) nval.field = this->field op param.field; \
+	ARITH_OP_FIELD_7(nval, param, op, __VA_ARGS__)
+#define ARITH_OP_FIELD_9(nval, param, op, field, ...) nval.field = this->field op param.field; \
+	ARITH_OP_FIELD_8(nval, param, op, __VA_ARGS__)
+#define ARITH_OP_FIELD_10(nval, param, op, field, ...) nval.field = this->field op param.field; \
+	ARITH_OP_FIELD_9(nval, param, op, __VA_ARGS__)
+
+#define ARITH_OP_FIELD_(N, nval, param, op, ...) \
+	CONCATENATE(ARITH_OP_FIELD_, N)(nval, param, op, __VA_ARGS__)
+#define ARITH_OP_FIELD(nval, param, op, ...) \
+	ARITH_OP_FIELD_(NARG(__VA_ARGS__), nval, param, op, __VA_ARGS__)
+
+#define IMPL_ARITH_METHOD(cname, mname, nval, param, op, field) \
+	cname cname::mname(const cname& param) const { \
+	return cname(this->field op param.field); \
+	}
+
+#define IMPL_NUM(cname, param, ...) cname cname::operator+() const { \
+	return *this; \
+	} \
+	cname cname::operator-() const { \
+	return (*this) * cname(-1); \
+	} \
+	IMPL_ARITH_METHOD(cname, operator+, _new, param, +, __VA_ARGS__) \
+	IMPL_ARITH_METHOD(cname, operator-, _new, param, -, __VA_ARGS__) \
+	IMPL_ARITH_METHOD(cname, operator*, _new, param, *, __VA_ARGS__)
+
+#define IMPL_FRAC(cname, param, ...) IMPL_NUM(cname, param, __VA_ARGS__) \
+	IMPL_ARITH_METHOD(cname, operator/, _new, param, /, __VA_ARGS__) \
+	cname cname::operator%(const cname& param) const { \
+	return (*this - ((*this / param) * param)); \
+	}
+
+#define IMPL_INCR_DECR(cname, param, field) cname& cname::operator++() { \
+	this->field++; return *this; \
+	} \
+	cname cname::operator++(int i) { \
+	(void)i; \
+	cname temp = *this; \
+	this->field++; \
+	return temp; \
+	} \
+	cname& cname::operator--() { \
+	this->field--; return *this; \
+	} \
+	cname cname::operator--(int i) { \
+	(void)i; \
+	cname temp = *this; \
+	this->field--; \
+	return temp; \
+	}
+
 #endif
